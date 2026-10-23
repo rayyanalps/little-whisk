@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Little Whisk · Home Bakery</title>
+<style>
+:root{--bg:#fdf6ee;--card:#fff;--ink:#3b2a22;--mute:#8a7468;--accent:#c4673f;--line:#ecdccb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1612;--card:#2a201a;--ink:#f3e7da;--mute:#b39d8d;--accent:#e08a5f;--line:#41332a}}
+:root[data-theme="dark"]{--bg:#1d1612;--card:#2a201a;--ink:#f3e7da;--mute:#b39d8d;--accent:#e08a5f;--line:#41332a}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif}
+h1,h2,h3{font-weight:600;margin:0}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header{padding:40px 0 24px;text-align:center}
+header h1{font-size:2.2rem}header p{color:var(--mute);margin:6px 0 0}
+.how{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:.85rem;color:var(--mute);margin-top:14px;font-family:system-ui,sans-serif}
+.how span{border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:18px 0 120px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.emoji{font-size:2.4rem}.item p{margin:0;color:var(--mute);font-size:.9rem;flex:1}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-family:system-ui,sans-serif}
+.price{font-weight:600}
+button,.btn{font:600 .95rem system-ui,sans-serif;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.qty{display:flex;align-items:center;gap:8px}.qty button{padding:4px 10px}
+#bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:none;justify-content:space-between;align-items:center;font-family:system-ui,sans-serif;z-index:5}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.modal.open{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px;font-family:system-ui,sans-serif}
+.sheet h2{font-family:Georgia,serif;margin-bottom:10px}
+label{display:block;font-size:.85rem;color:var(--mute);margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
+.line{display:flex;justify-content:space-between;padding:6px 0}
+.tot{border-top:1px solid var(--line);margin-top:8px;padding-top:8px;font-weight:600}
+.pay{display:grid;gap:8px;margin-top:6px}.pay label{display:flex;gap:10px;align-items:center;color:var(--ink);font-size:.95rem;margin:0;border:1px solid var(--line);padding:10px;border-radius:10px;background:var(--card)}
+.pay input{width:auto}
+.err{color:#c0392b;font-size:.85rem;min-height:1.2em}
+.note{font-size:.8rem;color:var(--mute)}
+
+.top{background:var(--accent);color:#fff;text-align:center;font:600 .85rem system-ui,sans-serif;padding:8px 12px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);border-bottom:1px solid var(--line);font-family:system-ui,sans-serif}
+nav .wrap{display:flex;align-items:center;gap:18px;height:58px}
+nav .brand{font:600 1.25rem Georgia,serif;margin-right:auto;color:var(--ink);text-decoration:none}
+nav a{color:var(--ink);text-decoration:none;font-size:.9rem}
+nav .links{display:flex;gap:18px}
+@media(max-width:640px){nav .links{display:none}}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.hero{background:linear-gradient(135deg,var(--card),var(--bg));border-bottom:1px solid var(--line);padding:56px 0;text-align:center}
+.hero h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.1}
+.hero p{color:var(--mute);max-width:520px;margin:14px auto 22px}
+.chips{display:flex;gap:12px;overflow-x:auto;padding:22px 0 6px;font-family:system-ui,sans-serif}
+.chip{flex:0 0 auto;text-align:center;cursor:pointer;width:84px;font-size:.78rem}
+.chip i{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 6px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-style:normal;font-size:1.7rem}
+.sec{margin:48px 0}.sec h2{text-align:center;font-size:1.6rem;margin-bottom:18px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;font-family:system-ui,sans-serif}
+.col{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+.col b{display:block;font:600 1.05rem Georgia,serif;margin:6px 0}.col span{font-size:.88rem;color:var(--mute)}
+.promo{border:2px dashed var(--accent);border-radius:14px;padding:16px;text-align:center;background:var(--card)}
+.promo b{display:block;font-size:1.3rem}.promo code{background:var(--bg);padding:3px 8px;border-radius:6px;font-weight:700;color:var(--accent)}
+footer{border-top:1px solid var(--line);padding:32px 0 100px;font:.9rem system-ui,sans-serif;color:var(--mute);text-align:center}
+footer a{color:var(--ink)}footer .fl{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.cp{display:flex;gap:8px;margin:10px 0}.cp input{text-transform:uppercase}
+.ok{color:#2e8b57;font-size:.85rem}
+.grid{margin-bottom:0!important}
+</style>
+</head>
+<body>
+<div class="top" id="topbar"></div>
+<nav><div class="wrap"><a class="brand" href="#">The Little Whisk</a>
+<div class="links"><a href="#menu">Menu</a><a href="#offers">Offers</a><a href="#how">How it works</a><a href="#contact">Contact</a><a id="track" target="_blank" rel="noopener">Track order</a></div>
+<button onclick="openCart()">Cart · <span id="nc">0</span></button></div></nav>
+<section class="hero"><div class="wrap">
+<h1>Baked fresh.<br>Made for your day.</h1>
+<p>Pre-order brownies, cookies, cakes and more. Pick a date and slot, and we bake it for you and deliver it to your door.</p>
+<a class="btn" href="#menu" style="text-decoration:none">Order now</a></div></section>
+<div class="wrap">
+<div class="chips" id="chips"></div>
+<div class="grid" id="menu"></div>
+
+<section class="sec" id="offers"><h2>Offers</h2><div class="cols" id="offs"></div></section>
+
+<section class="sec"><h2>Why order from us</h2><div class="cols">
+<div class="col">🧈<b>Baked to order</b><span>Nothing sits on a shelf. Your order is baked for your chosen day.</span></div>
+<div class="col">🏠<b>Home-style recipes</b><span>Small batches, made with care in a home kitchen.</span></div>
+<div class="col">🍫<b>Your choice of toppings</b><span>Pick from 11 toppings on our topping brownies.</span></div>
+<div class="col">💛<b>Honestly priced</b><span>Good ingredients, fair prices, free delivery on bigger orders.</span></div></div></section>
+
+<section class="sec" id="how"><h2>How it works</h2><div class="cols">
+<div class="col">1<b>Pick your bakes</b><span>Add what you like to the cart.</span></div>
+<div class="col">2<b>Choose a slot</b><span>Select a delivery date and time. Orders open from tomorrow.</span></div>
+<div class="col">3<b>Pay securely</b><span>UPI, card, or cash on delivery.</span></div>
+<div class="col">4<b>We bake &amp; deliver</b><span>Fresh to your door. We confirm on WhatsApp.</span></div></div></section>
+</div>
+<footer id="contact"><div class="wrap">
+<b style="color:var(--ink);font:600 1.2rem Georgia,serif">The Little Whisk</b>
+<div class="fl"><a id="wa" target="_blank" rel="noopener">WhatsApp us</a><a href="https://www.instagram.com/thelittle_whisk" target="_blank" rel="noopener">Instagram</a></div>
+<p>We accept UPI, cards and cash on delivery.<br>Pre-orders only. Please order at least 24 hours ahead.</p>
+<p>© The Little Whisk. All rights reserved.</p></div></footer>
+
+<div id="bar"><div><b id="bc">0 items</b> · <span id="bt"></span></div><button onclick="openCart()">View order</button></div>
+
+<div class="modal" id="m"><div class="sheet" id="sheet"></div></div>
+
+<script>
+// ====== EDIT THESE ======
+const CFG={
+  name:"The Little Whisk",
+  whatsapp:"917899005533",          // bakery WhatsApp number with country code, no +
+  upi:"yourname@upi",               // shown to customers for UPI payment
+  razorpayKey:"",                   // paste Razorpay Key ID to enable online card/UPI checkout (needs your own hosting)
+  leadDays:1,                       // earliest delivery = today + this many days
+  maxDays:30,
+  slots:["10 am – 12 pm","12 pm – 2 pm","4 pm – 6 pm","6 pm – 8 pm"],
+  deliveryFee:50, freeAbove:800, minOrder:300,
+  promos:{FIRST50:{min:500,off:50},BAKE100:{min:1000,off:100},BAKE200:{min:1800,off:200}},
+  dailyLimit:15                     // max items per day (checked in this browser only)
+};
+const MENU=[
+ {c:"Cookies",e:"🍪",n:"Chocolate Chip Cookies",d:"",v:[["Pack of 6",450]]},
+ {c:"Cookies",e:"🍪",n:"Chocolate Fudge Cookies",d:"",v:[["Pack of 6",450]]},
+ {c:"Brownies",e:"🍫",n:"Fudge Brownies",d:"",v:[["Pack of 6",490]]},
+ {c:"Brownies",e:"🍫",n:"Brownies with Toppings",d:"Pick your topping below.",t:1,v:[["Pack of 6",600]]},
+ {c:"Brownies",e:"🍫",n:"Walnut Brownie",d:"",v:[["Pack of 6",500]]},
+ {c:"Brownies",e:"🍫",n:"Brownie Bites",d:"8 bites: 2 plain, 2 KitKat, 2 Snickers, 2 Twix.",v:[["8 bites",350]]},
+ {c:"Brownies",e:"🍫",n:"Lunch Box Brownie Bites",d:"",v:[["10 bites",300]]},
+ {c:"Pizza Brownie",e:"🍕",n:"Pizza Brownie",d:"",v:[["Mini",900],["Large",1200]]},
+ {c:"Cakes",e:"🍰",n:"Ferocious Kat Cake",d:"",v:[["½ kg",850],["1 kg",1400]]},
+ {c:"Swiss Roll",e:"🍥",n:"Jam Swiss Roll",d:"",v:[["Pack of 10",750]]},
+ {c:"Cupcakes",e:"🧁",n:"Chocolate Cupcakes",d:"",v:[["Pack of 6",600]]},
+ {c:"Cupcakes",e:"🧁",n:"Vanilla Cupcakes",d:"",v:[["Pack of 6",600]]},
+ {c:"Muffins",e:"🧁",n:"Chocolate Muffins",d:"",v:[["Pack of 6",550]]}
+];
+const TOP=["Nutella","Twix","Oreo","Walnut","Salted Caramel","Gems","KitKat","Ferrero Rocher","Choco chip","Ganache","Snickers"];
+// ========================
+const cart={},TS={},CATS=[];let promo="";let view="";const $=s=>document.querySelector(s);
+const rs=n=>"₹"+n.toLocaleString("en-IN");
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+const K=(i,j)=>i+"_"+j+(MENU[i].t?"_"+(TS[i]||TOP[0]):"");
+const nm=c=>MENU[c.i].n+" – "+MENU[c.i].v[c.j][0]+(c.t?" ("+c.t+")":"");
+function renderMenu(){
+ let last="",h="";CATS.length=0;
+ MENU.forEach((m,i)=>{
+  if(m.c!=last){h+=`<h2 id="c-${CATS.length}" style="grid-column:1/-1;margin-top:14px">${m.c}</h2>`;CATS.push([m.c,m.e]);last=m.c}
+  h+=`<div class="item"><div class="emoji">${m.e}</div><h3>${m.n}</h3>${m.d?`<p>${m.d}</p>`:""}
+  ${m.t?`<select id="t${i}" onchange="TS[${i}]=this.value;drawAll()">${TOP.map(t=>`<option>${t}</option>`).join("")}</select>`:""}
+  ${m.v.map((v,j)=>`<div class="row"><span>${v[0]}<br><b class="price">${rs(v[1])}</b></span><div class="qty" id="q${i}_${j}"></div></div>`).join("")}</div>`;
+ });
+ $("#menu").innerHTML=h;drawAll();
+ $("#chips").innerHTML=CATS.map((c,k)=>`<div class="chip" onclick="document.getElementById('c-${k}').scrollIntoView({behavior:'smooth'})"><i>${c[1]}</i>${c[0]}</div>`).join("");
+}
+function drawAll(){MENU.forEach((m,i)=>m.v.forEach((_,j)=>{
+ const q=(cart[K(i,j)]||{}).q||0,el=$("#q"+i+"_"+j);
+ el.innerHTML=q?`<button class="ghost" onclick="add(${i},${j},-1)">−</button><b>${q}</b><button class="ghost" onclick="add(${i},${j},1)">+</button>`:`<button onclick="add(${i},${j},1)">Add</button>`}))}
+function add(i,j,d){const k=K(i,j);if(!cart[k])cart[k]={i,j,t:MENU[i].t?(TS[i]||TOP[0]):"",q:0};bump(k,d)}
+function bump(k,d){const c=cart[k];c.q+=d;if(c.q<=0)delete cart[k];drawAll();bar();if(view=="cart")openCart()}
+const cs=()=>Object.values(cart);
+function sub(){return cs().reduce((s,c)=>s+MENU[c.i].v[c.j][1]*c.q,0)}
+function count(){return cs().reduce((s,c)=>s+c.q,0)}
+function disc(){const p=CFG.promos[promo];return p&&sub()>=p.min?p.off:0}
+function tot(){return sub()-disc()+fee()}
+function applyPromo(){const c=($("#pc").value||"").trim().toUpperCase(),p=CFG.promos[c];
+ if(!p){promo="";$("#pm").innerHTML='<span class="err">Invalid code.</span>';return}
+ if(sub()<p.min){promo="";$("#pm").innerHTML=`<span class="err">Add ${rs(p.min-sub())} more to use ${c}.</span>`;return}
+ promo=c;openCart()}
+function fee(){return sub()>=CFG.freeAbove?0:CFG.deliveryFee}
+function bar(){const c=count();$("#nc").textContent=c;$("#bar").style.display=c?"flex":"none";$("#bc").textContent=c+(c==1?" item":" items");$("#bt").textContent=rs(sub())}
+function close_(){view="";$("#m").classList.remove("open")}
+$("#m").addEventListener("click",e=>{if(e.target.id=="m")close_()});
+function show(h){view="";$("#sheet").innerHTML=h;$("#m").classList.add("open")}
+
+function openCart(){
+ if(!count()){show(`<h2>Your cart is empty</h2><p>Add something tasty from the menu.</p><button onclick="close_()">Browse menu</button>`);view="cart";return}
+ const lines=Object.entries(cart).map(([k,c])=>`<div class="line"><span>${nm(c)}<br><span class="qty" style="display:inline-flex;margin-top:4px"><button class="ghost" onclick="bump('${k}',-1)">−</button><b>${c.q}</b><button class="ghost" onclick="bump('${k}',1)">+</button></span></span><span>${rs(MENU[c.i].v[c.j][1]*c.q)}</span></div>`).join("");
+ const below=sub()<CFG.minOrder;
+ show(`<h2>Your order</h2>${lines}
+ <div class="cp"><input id="pc" placeholder="Promo code" value="${promo}"><button class="ghost" onclick="applyPromo()">Apply</button></div><div id="pm">${disc()?`<span class="ok">${promo} applied</span>`:""}</div>
+ ${disc()?`<div class="line"><span>Discount</span><span>−${rs(disc())}</span></div>`:""}
+ <div class="line"><span>Delivery</span><span>${fee()?rs(fee()):"Free"}</span></div>
+ <div class="line tot"><span>Total</span><span>${rs(tot())}</span></div>
+ ${below?`<p class="err">Minimum order is ${rs(CFG.minOrder)}.</p>`:""}
+ <div class="row"><button class="ghost" onclick="close_()">Keep browsing</button><button ${below?"disabled style='opacity:.5'":""} onclick="checkout()">Continue</button></div>`);
+ view="cart";
+}
+function dstr(d){return d.toISOString().slice(0,10)}
+function checkout(){
+ const min=new Date();min.setDate(min.getDate()+CFG.leadDays);
+ const max=new Date();max.setDate(max.getDate()+CFG.maxDays);
+ const saved=load("lw_cust",{});
+ show(`<h2>Delivery &amp; payment</h2>
+ <label>Name</label><input id="f_n" value="${saved.n||""}" autocomplete="name">
+ <label>Phone (WhatsApp)</label><input id="f_p" type="tel" value="${saved.p||""}" autocomplete="tel">
+ <label>Delivery address</label><textarea id="f_a" rows="2">${saved.a||""}</textarea>
+ <label>Delivery date</label><input id="f_d" type="date" min="${dstr(min)}" max="${dstr(max)}" onchange="slotsFor()">
+ <label>Time slot</label><select id="f_s"><option value="">Pick a date first</option></select>
+ <label>Note (message on cake, allergies, gift note…)</label><input id="f_t">
+ <label>Payment</label>
+ <div class="pay">
+  <label><input type="radio" name="pm" value="online" checked> Pay online (UPI / card)</label>
+  <label><input type="radio" name="pm" value="upi"> Pay by UPI transfer, send screenshot on WhatsApp</label>
+  <label><input type="radio" name="pm" value="cod"> Cash on delivery</label>
+ </div>
+ <p class="err" id="err"></p>
+ ${disc()?`<div class="line"><span>Discount (${promo})</span><span>−${rs(disc())}</span></div>`:""}
+ <div class="line tot"><span>Total</span><span>${rs(tot())}</span></div>
+ <div class="row"><button class="ghost" onclick="openCart()">Back</button><button onclick="place()">Place order</button></div>`);
+}
+function slotsFor(){
+ const d=$("#f_d").value;if(!d)return;
+ const orders=load("lw_orders",[]);
+ const used=orders.filter(o=>o.date==d).reduce((a,o)=>a+o.items,0);
+ const full=used+count()>CFG.dailyLimit;
+ $("#f_s").innerHTML=full?`<option value="">Fully booked, try another date</option>`:CFG.slots.map(s=>`<option>${s}</option>`).join("");
+}
+async function place(){
+ const v=id=>$(id).value.trim(),err=m=>{$("#err").textContent=m};
+ const o={n:v("#f_n"),p:v("#f_p"),a:v("#f_a"),date:v("#f_d"),slot:v("#f_s"),note:v("#f_t"),pm:document.querySelector("input[name=pm]:checked").value};
+ if(!o.n||!o.a)return err("Please add your name and address.");
+ if(!/^[6-9]\d{9}$/.test(o.p.replace(/\D/g,"").slice(-10)))return err("Enter a valid 10-digit phone number.");
+ if(!o.date||!o.slot)return err("Pick a delivery date and time slot.");
+ o.lines=cs().map(c=>({n:nm(c),q:c.q}));
+ o.disc=disc();o.promo=disc()?promo:"";o.items=count();o.total=tot();o.id="LW"+Date.now().toString().slice(-6);
+ save("lw_cust",{n:o.n,p:o.p,a:o.a});
+ if(o.pm=="online"){
+  if(!CFG.razorpayKey){o.paid="demo";finish(o);return}
+  try{await loadRzp()}catch(e){return err("Couldn’t load the payment window. Check your connection.")}
+  new Razorpay({key:CFG.razorpayKey,amount:o.total*100,currency:"INR",name:CFG.name,description:"Order "+o.id,
+   prefill:{name:o.n,contact:o.p},handler:r=>{o.paid=r.razorpay_payment_id;finish(o)},
+   modal:{ondismiss:()=>err("Payment cancelled. You can try again.")}}).open();
+ }else{o.paid="pending";finish(o)}
+}
+function loadRzp(){return new Promise((res,rej)=>{if(window.Razorpay)return res();const s=document.createElement("script");s.src="https://checkout.razorpay.com/v1/checkout.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+function finish(o){
+ const all=load("lw_orders",[]);all.push(o);save("lw_orders",all);
+ const msg=`Hi ${CFG.name}! New order ${o.id}%0A`+o.lines.map(l=>`${l.q} × ${l.n}`).join("%0A")+`${o.disc?`%0APromo ${o.promo}: −${rs(o.disc)}`:""}%0ATotal: ${rs(o.total)}%0ADelivery: ${o.date}, ${o.slot}%0AAddress: ${o.a}%0APayment: ${o.pm=="online"?(o.paid=="demo"?"online (demo)":"paid online "+o.paid):o.pm=="upi"?"UPI transfer (screenshot to follow)":"cash on delivery"}`+(o.note?`%0ANote: ${o.note}`:"");
+ Object.keys(cart).forEach(k=>delete cart[k]);promo="";drawAll();bar();
+ show(`<h2>Order placed 🎉</h2>
+ <p>Thank you, ${o.n.split(" ")[0]}! Your order <b>${o.id}</b> is booked for <b>${o.date}</b>, ${o.slot}.</p>
+ ${o.pm=="upi"?`<p>Please pay <b>${rs(o.total)}</b> to UPI ID <b>${CFG.upi}</b> and share the screenshot on WhatsApp.</p>`:""}
+ ${o.pm=="cod"?`<p>Please keep <b>${rs(o.total)}</b> ready at delivery.</p>`:""}
+ ${o.paid=="demo"?`<p class="note">Demo mode: no real payment was taken.</p>`:""}
+ <p>Tap below to send the order details to us on WhatsApp so we can confirm it.</p>
+ <div class="row"><button class="ghost" onclick="close_()">Done</button><a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${CFG.whatsapp}?text=${msg}">Confirm on WhatsApp</a></div>`);
+}
+renderMenu();
+$("#track").href=$("#wa").href="https://wa.me/"+CFG.whatsapp+"?text="+encodeURIComponent("Hi! I'd like to check on my order.");
+$("#topbar").textContent="Use code FIRST50 for ₹50 off orders above ₹500 · Pre-orders open for delivery from tomorrow";
+$("#offs").innerHTML=Object.entries(CFG.promos).map(([c,p])=>`<div class="promo"><b>₹${p.off} OFF</b>on orders above ${rs(p.min)}<br><br>Use code <code>${c}</code></div>`).join("");
+</script>
+</body>
+</html>
